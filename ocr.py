@@ -1,10 +1,9 @@
-from io import BytesIO
 import json
 
-def process(image: BytesIO):
+def process(bucket, key):
     try:
         placeholder = {
-            "foo": "bar",
+            bucket: key,
         } 
         result = json.dumps(placeholder)
         return result

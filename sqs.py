@@ -1,6 +1,4 @@
 import boto3
-
-from io import BytesIO
 from ocr import process
 
 queue_name = "sentinela-sqs-bucket-ocr-queue-development"
@@ -12,15 +10,13 @@ queue = sqs.get_queue_by_name(QueueName=queue_name)
 
 def process_message(message_body):
     for record in message_body['Records']:
-        image_file = BytesIO()
-
         bucket = record['s3']['bucket']['name']
-        filename = record['s3']['object']['key']
+        key = record['s3']['object']['key']
         
-        s3.Bucket(bucket).download_fileobj(filename, image_file)
-
         try:
-            process(image_file)
+            result = process(bucket, key)
+            # TODO: publish this result to ocr-crud queue.
+            print(result)
         except:
             print('Error')
 
