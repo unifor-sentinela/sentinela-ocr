@@ -1,12 +1,13 @@
 import boto3
 from ocr import process
 
-queue_name = "sentinela-sqs-bucket-ocr-queue-development"
+bucket_queue = "sentinela-sqs-bucket-ocr-queue-development"
+crud_queue = "sentinela-sqs-crud-ocr-queue-development"
 
 sqs = boto3.resource("sqs")
 s3 = boto3.resource("s3")
 
-queue = sqs.get_queue_by_name(QueueName=queue_name)
+queue = sqs.get_queue_by_name(QueueName=bucket_queue)
 
 def process_message(message_body):
     for record in message_body['Records']:
@@ -15,8 +16,13 @@ def process_message(message_body):
         
         try:
             result = process(bucket, key)
-            # TODO: publish this result to ocr-crud queue.
-            print(result)
+
+            response = queue.send_message(
+                QueueUrl=crud_queue,
+                MessageBody=result
+            )
+            
+            print(response)
         except:
             print('Error')
 
