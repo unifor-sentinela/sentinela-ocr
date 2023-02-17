@@ -24,5 +24,5 @@ pip install -r ./requirements.txt
 To run (will consume **one** image, exactly):
 
 `
-python sqs.py
+python main.py
 `
