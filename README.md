@@ -9,7 +9,7 @@ python -m venv  ./venv
 Activate venv...
 ... in UNIX:
 `
-. ./venv/bin/activate
+. source ./venv/bin/activate
 `
 ... in Windows:
 `
@@ -21,7 +21,7 @@ Then install deps:
 pip install -r ./requirements.txt
 `
 
-To run (will consume **one** image, exactly):
+To run:
 
 `
 python main.py
