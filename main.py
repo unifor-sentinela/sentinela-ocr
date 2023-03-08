@@ -1,13 +1,19 @@
 import boto3
+import json
 from ocr import process
 
-bucket_queue = "sentinela-sqs-bucket-ocr-queue-development"
-crud_queue = "sentinela-sqs-crud-ocr-queue-development"
+bucket_queue_name = "sentinela-sqs-bucket-ocr-queue-development"
+crud_queue_name = "sentinela-sqs-ocr-crud-queue-development"
 
-sqs = boto3.resource("sqs")
-s3 = boto3.resource("s3")
+sqs = boto3.resource(
+    service_name='sqs',
+    endpoint_url='http://localhost:4566',
+    aws_access_key_id='root',
+    aws_secret_access_key='root'
+    )
 
-queue = sqs.get_queue_by_name(QueueName=bucket_queue)
+bucket_queue = sqs.get_queue_by_name(QueueName=bucket_queue_name)
+crud_queue = sqs.get_queue_by_name(QueueName=crud_queue_name)
 
 def process_message(message_body):
     for record in message_body['Records']:
@@ -16,9 +22,7 @@ def process_message(message_body):
         
         try:
             result = process(bucket, key)
-
-            response = queue.send_message(
-                QueueUrl=crud_queue,
+            response = crud_queue.send_message(
                 MessageBody=result
             )
             
@@ -28,7 +32,7 @@ def process_message(message_body):
 
 if __name__ == "__main__":
     while True:
-        messages = queue.receive_messages(MaxNumberOfMessages=1)
+        messages = bucket_queue.receive_messages(MaxNumberOfMessages=1)
         for message in messages:
-            process_message(message.body)
+            process_message(json.loads(message.body))
             message.delete()
