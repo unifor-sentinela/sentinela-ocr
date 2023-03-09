@@ -9,7 +9,7 @@ python -m venv  ./venv
 Activate venv...
 ... in UNIX:
 `
-. source ./venv/bin/activate
+source ./venv/bin/activate
 `
 ... in Windows:
 `
