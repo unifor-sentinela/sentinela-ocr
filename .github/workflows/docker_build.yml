@@ -1,6 +1,7 @@
 name: Assert docker image is buildable
 
 on:
+  workflow_dispatch: {}
   pull_request:
     branches: ["main"]
 
