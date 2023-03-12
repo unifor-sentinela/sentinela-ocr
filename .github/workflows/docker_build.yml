@@ -1,0 +1,25 @@
+name: Assert docker image is buildable
+
+on:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build development and production images
+        run: |
+          docker build --target development \
+            --label org.opencontainers.image.source='https://github.com/${{ github.repository }}' \
+            -t ghcr.io/${{ github.repository }}:development .
+          docker build --target production \
+            --label org.opencontainers.image.source='https://github.com/${{ github.repository }}' \
+            -t ghcr.io/${{ github.repository }}:production .
